@@ -1,3 +1,6 @@
+Application runtime database is Microsoft SQL Server 2017
+Tests run with h2 in memory db.
+
 To install project type in terminal: mvn clean install
 
 To run project type in terminal mvn spring-boot:run

@@ -1,18 +1,20 @@
 package com.example.bookshelf.book.boundary;
 
-import java.util.List;
+import com.example.bookshelf.PaginatedResponse;
+import com.example.bookshelf.comment.boundary.CommentDTO;
+
+import java.util.UUID;
 
 public interface BookService {
 
     BookDTO saveBook(BookDTO bookDTO);
 
-    BookDTO getBook(Long id) throws BookNotFoundException;
+    BookWithCommentDTO getBook(UUID id) throws BookNotFoundException;
 
-    List<BookDTO> getAllBooks();
+    PaginatedResponse<BookWithCommentDTO> getAllBooksPaginated(int pageNumber, int elementsSize);
 
-    BookDTO updateBook(Long id, BookDTO bookDTO) throws BookNotFoundException;
+    BookDTO updateBook(UUID id, BookDTO bookDTO) throws BookNotFoundException;
 
-    void removeBook(Long id);
-
+    void removeBook(UUID id);
 
 }

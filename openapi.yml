@@ -6,7 +6,20 @@ info:
 paths:
   /book:
     get:
-      description: Get all books
+      description: Get all books, paginate result, max available elements size per size is 100
+      parameters:
+        - in: query
+          name: pageNumber
+          schema:
+            type: number
+          required: true
+          description: Number of requested page
+        - in: query
+          name: elementsOnSize
+          schema:
+            type: number
+          required: true
+          description: Size of requested books collection
       responses:
         '200':
           description: Return all books in JSON format
@@ -55,9 +68,9 @@ paths:
         - in: path
           name: id
           schema:
-            type: integer
+            type: string
           required: true
-          description: Numeric Id of the book to get
+          description: Id of the book to get
       requestBody:
         required: true
         content:
@@ -84,6 +97,116 @@ paths:
       responses:
         '200':
           description: Empty response body
+  /book/{id}/comment:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Book id of type UUID
+        - in: query
+          name: pageNumber
+          schema:
+            type: number
+          required: true
+          description: Number of requested page
+        - in: query
+          name: elementsOnSize
+          schema:
+            type: number
+          required: true
+          description: Size of requested books collection
+      responses:
+        '200':
+          description: Comments for given book id, paginated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCommentResponse'
+    post:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Book id of type UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentDTO'
+      responses:
+        '201':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentDTO'
+        '404':
+          description: Book with given id not found
+  /comment/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Comment id of type UUID
+      responses:
+        '200':
+          description: Comment object
+          content:
+            application/joson:
+              schema:
+                $ref: '#/components/schemas/CommentDTO'
+        '404':
+          description: Comment with given id not found.
+    patch:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Comment id of type UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  maxLength: 1000
+      responses:
+        '200':
+          description: Comment's content updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentDTO'
+        '404':
+          description: Comment with given id not found.
+    delete:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Comment id of type UUID
+      responses:
+        '204':
+          description: Empty response, operation successful.
+
 
 components:
   schemas:
@@ -91,8 +214,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
           readOnly: true
         title:
           type: string
@@ -108,5 +230,81 @@ components:
           type: integer
           minimum: 0
           maximum: 5
+    CommentDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        author:
+          type: string
+          maxLength: 255
+          minLength: 1
+        content:
+          type: string
+          maxLength: 1000
+          minLength: 1
+        creationTime:
+          type: string
+          readOnly: true
+          description: Automatically set while creating the response
+      required:
+        - author
+        - content
+    BookWithCommentsDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        title:
+          type: string
+        author:
+          type: string
+        isbnnumber:
+          type: string
+          description: Valid ISBN number
+        pages:
+          type: integer
+          format: int32
+        rate:
+          type: integer
+          minimum: 0
+          maximum: 5
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentDTO'
+    PaginatedResponse:
+      type: object
+      readOnly: true
+      properties:
+        totalPages:
+          type: number
+        totalElements:
+          type: number
+          format: int64
+        pageNumber:
+          type: number
+    PaginatedBookResponse:
+      allOf:
+        - $ref: '#/components/schemas/PaginatedResponse'
+        - type: object
+        properties:
+          elements:
+            type: array
+            items:
+              type:
+                $ref: '#/components/schemas/BookDTO'
+    PaginatedCommentResponse:
+      allOf:
+        - $ref: '#/components/schemas/PaginatedResponse'
+        - type: object
+        properties:
+          elements:
+            type: array
+            items:
+              type:
+                $ref: '#/components/schemas/CommentDTO'
 
 

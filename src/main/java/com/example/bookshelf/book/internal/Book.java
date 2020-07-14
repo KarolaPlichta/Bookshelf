@@ -4,13 +4,14 @@ package com.example.bookshelf.book.internal;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
@@ -20,11 +21,11 @@ public class Book {
     @Range(min = 0, max = 5)
     private Integer rate;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

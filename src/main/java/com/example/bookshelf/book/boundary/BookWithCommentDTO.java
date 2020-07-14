@@ -1,14 +1,16 @@
 package com.example.bookshelf.book.boundary;
 
+import com.example.bookshelf.comment.boundary.CommentDTO;
 import com.example.bookshelf.validation.ISBNCorrect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.UUID;
 
-public class BookDTO {
+public class BookWithCommentDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
@@ -22,6 +24,7 @@ public class BookDTO {
     @Min(0)
     @Max(5)
     private Integer rate;
+    private List<CommentDTO> comments;
 
     public UUID getId() {
         return id;
@@ -69,5 +72,13 @@ public class BookDTO {
 
     public void setRate(Integer rate) {
         this.rate = rate;
+    }
+
+    public List<CommentDTO> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentDTO> comments) {
+        this.comments = comments;
     }
 }
